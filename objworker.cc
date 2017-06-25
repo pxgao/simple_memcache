@@ -153,7 +153,10 @@ void ObjWorker::handle_put(vector<string> parts, char* remaining_start, int rema
       n = read(socket, bodybuf, min(BUFSIZE, fsize - rsize));
       if (n <= 0) {
         LOG_ERROR << "Error reading, n = " << n << " errno " << strerror(errno);
-        break;
+        if (errno == 11)
+          continue;
+        else
+          break;
       }
       shm_file.write(bodybuf, n);
       rsize += n;
